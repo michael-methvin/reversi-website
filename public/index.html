@@ -54,8 +54,11 @@
                 <div class = "container-fluid">
                     <!-- Enter Lobby Form -->
                     <div class = "row align-items-center justify-content-center m-3 pt-5">
-                        <div class="col-8">
-                            <div class = "input-group">
+                        <div class="col-8 bg-light shadow rounded card" style="height:200px">
+                            <div class ="card-title p-3 pb-0">
+                                <h3><strong>Enter a Name and Join the Lobby!</strong></h3>
+                            </div>
+                            <div class = "input-group card-body pt-0">
                                 <span class="input-group-text" id="displayName">Name</span>
                                 <input type="text" class="form-control text-nowrap" id="nameInput" placeHolder="Choose Display Name" aria-label="Enter your display name for user while Playing Reversi" aria-describedby="displayName"/>
                                 <button type = "submit" class = "btn btn-primary text-nowrap" id="lobbyButton" onclick="window.location='lobby.html'">Enter Lobby</button>     
