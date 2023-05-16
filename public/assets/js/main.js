@@ -20,5 +20,12 @@ let username = getIRIParameterVal('username');
 if ((typeof username == 'undefined') || (username === null) || (username == '')) {
     username = "Anonymous_" + Math.floor(Math.random()*1000);
 }
-
+$('#welcome').prepend('<h3>Welcome to the Lobby, ' + username);
 $('#messages').prepend('<b>' + username + ':</b>');
+
+
+
+let socket = io();
+socket.on('log', function(array) {
+    console.log.apply(console,array);
+});
