@@ -1,0 +1,14 @@
+.headerrow {
+    background-color: darkseagreen;
+}
+
+.join_room_response {
+    background-color: rgb(202, 194, 194);
+    margin: 1px 1px 1px 10px;
+}
+
+.send_message_response {
+    font-size:125%;
+    margin: 1px 1px 1px 1px;
+    color: rgb(0, 0, 0);
+}
