@@ -5,10 +5,29 @@
 .join_room_response {
     background-color: rgb(202, 194, 194);
     margin: 1px 1px 1px 10px;
+    padding:0;
 }
 
 .send_message_response {
     font-size:125%;
     margin: 1px 1px 1px 1px;
     color: rgb(0, 0, 0);
+}
+.chatbox {
+    background-color: #eee;
+    height:500px;
+    margin-right: 100px;
+
+
+}
+.chatheader {
+    color: white;
+    background-color: rgb(238, 120, 132);
+    height:50px;
+    margin-right: 100px;
+
+
+}
+.chatmessager {
+    background-color:rgb(238, 120, 132) ;
 }

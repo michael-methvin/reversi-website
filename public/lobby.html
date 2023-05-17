@@ -1,6 +1,8 @@
 <!doctype html>
     <html lang="en">
 
+
+    <!--TODO      Multicolored text for names randomized, stylize chat, top message are last, scroll wheel, smaller chat area        -->
     <!--Lobby Page -->
         <head>
             <meta charset="utf-8">
@@ -23,18 +25,32 @@
                     </div>
                 </div>
 
-                <div class = "row m-3 ">
-                    <div class = "col">
-                        <div class = "row align-items-center justify-content-center m-3">
-                            <div class="col-8">
-                                <div class = "input-group">
+                <div class = "row">
+                    <div class ="col 6"></div>
+                    
+                    <div class = "col 6">
+                        <div class = "row ">
+                            <div class="row chatheader rounded shadow">
+                                <div class ="col">
+                                    <h4>Lobby Chat</h4>
+                                </div>
+                            </div>
+                            
+                            <div class="row chatbox rounded shadow">
+                                <div class ="col" id="messages">
+                                </div>
+
+                            </div>
+                            
+                            <div class = "row input-group chatmessager shadow rounded">     
+                                <div class ="col-sm-9 p-3">
                                     <input type="text" class="form-control text-nowrap" id="chatMessage" placeHolder="Enter Message Here" aria-label="Enter your message to send to the chat room"/>
+                                </div>
+                                <div class ="col-3 p-3">
                                     <button type = "submit" class = "btn btn-primary text-nowrap" id="chatButton" onclick="sendMessage()">Send</button>     
                                 </div>
                             </div>
                         </div>
-                        <h4>Messages</h4>
-                        <div id="messages"></div>
                     </div>
                 </div>
             </div>
