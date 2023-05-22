@@ -25,10 +25,15 @@
                     </div>
                 </div>
 
+                <!-- Chat Row -->
                 <div class = "row">
+                    
                     <div class ="col 6"></div>
                     
+                    <!-- Chat Column -->
                     <div class = "col 6">
+                        
+                        <!-- Chat Header Row -->
                         <div class = "row ">
                             <div class="row chatheader rounded shadow">
                                 <div class ="col">
@@ -36,12 +41,14 @@
                                 </div>
                             </div>
                             
-                            <div class="row chatbox rounded shadow">
-                                <div class ="col" id="messages">
+                            <!-- ChatBox Row (Where Messages Appear) -->
+                            <div class="row chatbox rounded shadow ">
+                                <div class="d-flex align-content-end flex-wrap mb-2">
+                                    <div class="mt-auto p-2" id="messages"></div>
                                 </div>
-
                             </div>
                             
+                            <!-- Chat Input Row -->
                             <div class = "row input-group chatmessager shadow rounded">     
                                 <div class ="col-sm-9 p-3">
                                     <input type="text" class="form-control text-nowrap" id="chatMessage" placeHolder="Enter Message Here" aria-label="Enter your message to send to the chat room"/>
@@ -50,6 +57,7 @@
                                     <button type = "submit" class = "btn btn-primary text-nowrap" id="chatButton" onclick="sendMessage()">Send</button>     
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
