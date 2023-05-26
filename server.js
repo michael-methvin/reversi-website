@@ -35,6 +35,9 @@ let app = http.createServer(
 console.log('The server is running');
 
 
+/* Set up player registry information and socketIds */
+let players = []
+
 /*******************************/
 /* Setting up web socket server*/
 
@@ -54,10 +57,6 @@ io.on('connection',(socket) => {
 
     serverLog('a page connected to the server: ' + socket.id);
 
-    socket.on('disconnect', () => {
-        serverLog('a page disconnected from the server: ' + socket.id);
-    });
-
     /* join_room command handler
     * expected request:
     *   {
@@ -72,6 +71,7 @@ io.on('connection',(socket) => {
     *       'room'     : 'room joined',
     *       'username' : the user that joined,
     *       'count'    : num of user present in room
+    *       'socket_id': the socket of the user that joined
     *   }
     * 
     *   OR
@@ -121,7 +121,6 @@ io.on('connection',(socket) => {
 
         // Confirm client in room
         io.in(room).fetchSockets().then((sockets)=> {
-            serverLog(sockets.length + ' client(s) in : ' + room);
             if((typeof sockets == 'undefined') || (sockets === null) || (!sockets.includes(socket))) {
                 response = {};
                 response.result = 'fail';
@@ -130,15 +129,27 @@ io.on('connection',(socket) => {
                 serverLog('join_room command FAIL', JSON.stringify(response));
             }
             else {
-                response = {};
-                response.result = 'success';
-                response.room = room;
-                response.username = username;
-                response.count = sockets.length;
+                players[socket.id] = {
+                    username: username,
+                    room: room
+                }
+
+                /*Announce to everyone in the room the other players in the room*/
+                for(const member of sockets) {
+                    response = {
+                        result: 'success',
+                        socket_id: member.id,
+                        room: players[member.id].room,
+                        username: players[member.id].username,
+                        count: sockets.length
+
+                    }
                 
                 // Notify Room that user has connected
                 io.of('/').to(room).emit('join_room_response',response);
                 serverLog('join_room command SUCCESS', JSON.stringify(response));
+                
+                }
             }
         });
 
@@ -146,6 +157,31 @@ io.on('connection',(socket) => {
 
    
     });
+
+
+    socket.on('disconnect', () => {
+
+        if((typeof players[socket.id] != 'undefined') && (players[socket.id] != null )) {
+            let response = {
+                username: players[socket.id].username,
+                room: players[socket.id].room,
+                count: Object.keys(players).length - 1,
+                socket_id: socket.id
+            };
+            let room = players[socket.id].room;
+            delete players[socket.id];
+
+            // tell everyone who left
+            io.of('/').to(room).emit('player_disconnected', response);
+            serverLog('player successfully disconnected ', JSON.stringify(response));
+
+        }
+
+
+
+    });
+
+
 
     
     /* send_message command handler
