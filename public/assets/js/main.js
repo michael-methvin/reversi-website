@@ -36,7 +36,7 @@ socket.on('log', function(array) {
 
 
 function makeInviteButton() {
-    let newString = "<button type='button' class='btn btn-outline-primary'>Invite</button>"
+    let newString = "<button type='button' class='btn btn-primary'>Invite</button>"
     newNode = $(newString);
     return newNode;
 }
@@ -81,28 +81,54 @@ socket.on('join_room_response', (response) => {
     */
 
     /* Creating Dynamic Invite from lobby section */
-    let nodeA = $("<div></div>");
-    nodeA.addClass("row");
-    nodeA.addClass("align-items-center");
-    nodeA.addClass("socket_" + response.socket_id);
-    nodeA.hide();
-    let nodeB = $("<div></div>");
-    nodeB.addClass("col");
-    nodeB.addClass("text-end");
-    nodeB.addClass("socket_" + response.socket_id);
-    nodeB.append('<h4>'+ response.username + '</h4>')
-    let nodeC = $("<div></div>");
-    nodeC.addClass("col");
-    nodeC.addClass("text-start");
-    nodeC.addClass("socket_" + response.socket_id);
-    let buttonC = makeInviteButton();
-    nodeC.append(buttonC);
-    nodeA.append(nodeB);
-    nodeA.append(nodeC);
+    let numInChart = (response.count - 2) % 2;
+    if(numInChart === 0) {
+        let nodeA = $("<div></div>");
+        nodeA.addClass("row");
+        nodeA.addClass("align-items-left");
+        nodeA.addClass("socket_" + response.socket_id);
+        nodeA.addClass("eventable");
+        nodeA.hide();
+        let nodeB = $("<div></div>");
+        nodeB.addClass("col");
+        //nodeB.addClass("text-end");
+        nodeB.addClass("socket_" + response.socket_id);
+        nodeB.append('<h4>'+ response.username + '</h4>')
+        let nodeC = $("<div></div>");
+        nodeC.addClass("col");
+        nodeC.addClass("text-start");
+        nodeC.addClass("socket_" + response.socket_id);
+        let buttonC = makeInviteButton();
+        nodeC.append(buttonC);
+        nodeA.append(nodeB);
+        nodeA.append(nodeC);
 
-    $("#players").append(nodeA);
-    nodeA.show("fade", 1000);
+        $("#players").append(nodeA);
+        nodeA.show("fade", 1000);
+    }
+    else {
+        let nodeA = $("<div></div>");
+        nodeA.addClass("row");
+        nodeA.addClass("align-items-left");
+        nodeA.addClass("socket_" + response.socket_id);
+        nodeA.hide();
+        let nodeB = $("<div></div>");
+        nodeB.addClass("col");
+        //nodeB.addClass("text-end");
+        nodeB.addClass("socket_" + response.socket_id);
+        nodeB.append('<h4>'+ response.username + '</h4>')
+        let nodeC = $("<div></div>");
+        nodeC.addClass("col");
+        nodeC.addClass("text-start");
+        nodeC.addClass("socket_" + response.socket_id);
+        let buttonC = makeInviteButton();
+        nodeC.append(buttonC);
+        nodeA.append(nodeB);
+        nodeA.append(nodeC);
 
+        $("#players").append(nodeA);
+        nodeA.show("fade", 1000);
+    }
 
     /* Announcing in the chat that someone has arrived */
     let newString = '<p class = \'join_room_response\'> ' + response.username + ' joined the ' + response.room + '. (' +response.count + ' user(s) in the room.)</p>';
@@ -198,3 +224,17 @@ $( () =>{
 
 
 });
+
+function goToLobby() {
+    let username = encodeURI($('#nameInput').val());
+    window.location.href = "lobby.html?username="+username;
+}
+$('#nameInput').keypress(
+function(e) {
+    let key = e.which;
+    if(key == 13) {// enter key
+        $('button[id = lobbyButton]').click();
+        return false;
+    }
+
+})

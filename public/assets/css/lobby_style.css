@@ -1,5 +1,5 @@
-.headerrow {
-    background-color: darkseagreen;
+body {
+    background-color: #F2EDEB;
 }
 
 .join_room_response,
@@ -13,21 +13,39 @@
     color: rgb(0, 0, 0);
 }
 .chatbox {
-    background-color: #eee;
+    background-color: #E8E7E7;
     height: 500px;
     overflow-y: auto;
-    margin-right: 100px;
+    margin: 0% 20% 0% 10%;
 
 
 }
 .chatheader {
     color: white;
-    background-color: rgb(238, 120, 132);
+    background-color: #F05365;
     height:50px;
-    margin-right: 100px;
+    margin: 5% 10% 0% 10%;
+    border-radius: 10px 10px 0px 0px;
 
 
 }
 .chatmessager {
-    background-color:rgb(238, 120, 132) ;
+    background-color: #F05365;
+    margin: 0% 10% 0% 10%;
+    border-radius: 0px 0px 10px 10px;
+
+}
+
+.playersbox {
+    background-color:#925E78;
+    height: 500px;
+    margin: 5% 5% 0% 10%;
+    border-radius: 10px 10px 10px 10px;
+    align-content: left;
+    color: rgb(255, 255, 255);
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+
+}
+.eventable {
+    background-color: #FABC2A;
 }
