@@ -35,13 +35,110 @@ socket.on('log', function(array) {
 });
 
 
-function makeInviteButton() {
-    let newString = "<button type='button' class='btn btn-primary'>Invite</button>"
+function makeInviteButton(socket_id) {
+    let newString = "<button type='button' class='btn btn-secondary'>Invite</button>"
+    newNode = $(newString);
+
+    newNode.click( () => {
+        let request = {
+            requested_user:socket_id
+        }
+        console.log('**** Client log message, sending \'invite\' command: ' +JSON.stringify(request));
+        socket.emit('invite', request);
+
+    });
+    return newNode;
+}
+
+function makeInvitedButton(socket_id) {
+    let newString = "<button type='button' class='btn btn-primary'>Invited</button>"
+    newNode = $(newString);
+    newNode.click( () => {
+        let request = {
+            requested_user:socket_id
+        }
+        console.log('**** Client log message, sending \'uninvite\' command: ' +JSON.stringify(request));
+        socket.emit('uninvite', request);
+
+    });
+    return newNode;
+}
+
+function makePlayButton(socket_id) {
+    let newString = "<button type='button' class='btn btn-success'>Play</button>"
+    newNode = $(newString);
+    newNode.click( () => {
+        let request = {
+            requested_user:socket_id
+        }
+        console.log('**** Client log message, sending \'game_start\' command: ' +JSON.stringify(request));
+        socket.emit('game_start', request);
+
+    });
+    return newNode;
+}
+function makeStartGameButton() {
+    let newString = "<button type='button' class='btn btn-danger'>Starting...</button>"
     newNode = $(newString);
     return newNode;
 }
 
+socket.on('invite_response', (response) => {
+    if((typeof response == 'undefined') || (response === null)) {
+        console.log('Server did not receive response')
+        return;
+    }
+    if(response ==='fail') {
+        console.log(response.message);
+        return;
+    }
 
+    let newNode = makeInvitedButton(response.socket_id);
+    $('.socket_' + response.socket_id + ' button').replaceWith(newNode);
+});
+
+socket.on('invited', (response) => {
+    if((typeof response == 'undefined') || (response === null)) {
+        console.log('Server did not receive response')
+        return;
+    }
+    if(response ==='fail') {
+        console.log(response.message);
+        return;
+    }
+
+    let newNode = makePlayButton(response.socket_id);
+    $('.socket_' + response.socket_id + ' button').replaceWith(newNode);
+});
+
+socket.on('uninvited', (response) => {
+    if((typeof response == 'undefined') || (response === null)) {
+        console.log('Server did not receive response')
+        return;
+    }
+    if(response ==='fail') {
+        console.log(response.message);
+        return;
+    }
+
+    let newNode = makeInviteButton();
+    $('.socket_' + response.socket_id + ' button').replaceWith(newNode);
+});
+
+socket.on('game_start_response', (response) => {
+    if((typeof response == 'undefined') || (response === null)) {
+        console.log('Server did not receive response')
+        return;
+    }
+    if(response ==='fail') {
+        console.log(response.message);
+        return;
+    }
+
+    let newNode = makeStartGameButton();
+    $('.socket_' + response.socket_id + ' button').replaceWith(newNode);
+    window.location.href='game.html?username='+username + '&game_id' + response.game_id;
+});
 
 
 socket.on('join_room_response', (response) => {
@@ -81,32 +178,7 @@ socket.on('join_room_response', (response) => {
     */
 
     /* Creating Dynamic Invite from lobby section */
-    let numInChart = (response.count - 2) % 2;
-    if(numInChart === 0) {
-        let nodeA = $("<div></div>");
-        nodeA.addClass("row");
-        nodeA.addClass("align-items-left");
-        nodeA.addClass("socket_" + response.socket_id);
-        nodeA.addClass("eventable");
-        nodeA.hide();
-        let nodeB = $("<div></div>");
-        nodeB.addClass("col");
-        //nodeB.addClass("text-end");
-        nodeB.addClass("socket_" + response.socket_id);
-        nodeB.append('<h4>'+ response.username + '</h4>')
-        let nodeC = $("<div></div>");
-        nodeC.addClass("col");
-        nodeC.addClass("text-start");
-        nodeC.addClass("socket_" + response.socket_id);
-        let buttonC = makeInviteButton();
-        nodeC.append(buttonC);
-        nodeA.append(nodeB);
-        nodeA.append(nodeC);
 
-        $("#players").append(nodeA);
-        nodeA.show("fade", 1000);
-    }
-    else {
         let nodeA = $("<div></div>");
         nodeA.addClass("row");
         nodeA.addClass("align-items-left");
@@ -121,15 +193,14 @@ socket.on('join_room_response', (response) => {
         nodeC.addClass("col");
         nodeC.addClass("text-start");
         nodeC.addClass("socket_" + response.socket_id);
-        let buttonC = makeInviteButton();
+        let buttonC = makeInviteButton(response.socket_id);
         nodeC.append(buttonC);
         nodeA.append(nodeB);
         nodeA.append(nodeC);
 
         $("#players").append(nodeA);
         nodeA.show("fade", 1000);
-    }
-
+    
     /* Announcing in the chat that someone has arrived */
     let newString = '<p class = \'join_room_response\'> ' + response.username + ' joined the ' + response.room + '. (' +response.count + ' user(s) in the room.)</p>';
     let newNode = $(newString);
@@ -224,17 +295,3 @@ $( () =>{
 
 
 });
-
-function goToLobby() {
-    let username = encodeURI($('#nameInput').val());
-    window.location.href = "lobby.html?username="+username;
-}
-$('#nameInput').keypress(
-function(e) {
-    let key = e.which;
-    if(key == 13) {// enter key
-        $('button[id = lobbyButton]').click();
-        return false;
-    }
-
-})
