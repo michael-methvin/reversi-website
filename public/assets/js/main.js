@@ -22,9 +22,9 @@ if ((typeof username == 'undefined') || (username === null) || (username == 'nul
     username = "Anonymous_" + Math.floor(Math.random()*1000);
 }
 
-let chatRoom = decodeURI(getIRIParameterVal('game_id'));
-if ((typeof chatRoom == 'undefined') || (chatRoom === null) || (chatRoom == 'null')) {
-    chatRoom = 'Lobby';
+let room = decodeURI(getIRIParameterVal('game_id'));
+if ((typeof room == 'undefined') || (room === null) || (room == 'null')) {
+    room = 'Lobby';
 }
 
 
@@ -137,7 +137,7 @@ socket.on('game_start_response', (response) => {
 
     let newNode = makeStartGameButton();
     $('.socket_' + response.socket_id + ' button').replaceWith(newNode);
-    window.location.href='game.html?username='+username + '&game_id' + response.game_id;
+    window.location.href='game.html?username='+username + '&game_id=' + response.game_id;
 });
 
 
@@ -202,7 +202,7 @@ socket.on('join_room_response', (response) => {
         nodeA.show("fade", 1000);
     
     /* Announcing in the chat that someone has arrived */
-    let newString = '<p class = \'join_room_response\'> ' + response.username + ' joined the ' + response.room + '. (' +response.count + ' user(s) in the room.)</p>';
+    let newString = '<p class = \'join_room_response\'> ' + response.username + ' joined the chat. (' +response.count + ' user(s) in the room.)</p>';
     let newNode = $(newString);
     newNode.hide();
     $('#messages').prepend(newNode);
@@ -271,16 +271,192 @@ socket.on('send_message_response', (response) => {
 
 });
 
+
+let old_board = [
+    ['?', '?', '?', '?', '?', '?', '?', '?'],
+    ['?', '?', '?', '?', '?', '?', '?', '?'],
+    ['?', '?', '?', '?', '?', '?', '?', '?'],
+    ['?', '?', '?', '?', '?', '?', '?', '?'],
+    ['?', '?', '?', '?', '?', '?', '?', '?'],
+    ['?', '?', '?', '?', '?', '?', '?', '?'],
+    ['?', '?', '?', '?', '?', '?', '?', '?'],
+    ['?', '?', '?', '?', '?', '?', '?', '?']
+];
+
+let myToken = '';
+
+socket.on('game_update', (response) => {
+    if((typeof response == 'undefined') || (response === null)) {
+        console.log('Server did not receive request');
+        return;
+    }
+    if(response.result ==='fail') {
+        console.log(response.message);
+        return;
+    }
+    
+    let board = response.game.board;
+
+    if((typeof board == 'undefined') || (board === null)) {
+        console.log("Server did not send a valid board to display");
+        return;
+    }
+
+    // Update Token
+    if(socket.id === response.game.player_heart.socket) {
+        myToken = 'heart';
+    }
+    else if(socket.id === response.game.player_diamond.socket) {
+        myToken = 'diamond';
+    }
+    else {
+        window.location.href='lobby.html?username=' + username;
+        return;
+    }
+    $('#my_token').html('<h3 id="my_token"> I am ' + myToken + '</h3>');
+
+    let diamondSum = 0;
+    let heartSum = 0;
+
+    // Animate Changes to The Board
+    for(let row= 0; row < 8; row++) {
+        for(let col= 0; col < 8; col++) {
+            if(board[row][col] === 'd') {
+                diamondSum++;
+            }
+            else if(board[row][col] === 'h') {
+                heartSum++;
+            }
+
+
+            // Check to see if server changed any space on the board
+            if(old_board[row][col] !== board[row][col]) {
+                let graphic ='';
+                let altTag='';
+                if((old_board[row][col] === '?') && (board[row][col] === ' ')) {
+                    graphic = 'empty.gif';
+                    altTag = 'empty space'
+                }
+                else if((old_board[row][col] === '?') && (board[row][col] === 'h')) {
+                    graphic = 'empty_to_heart.gif';
+                    altTag = 'heart token'
+                }
+                else if((old_board[row][col] === '?') && (board[row][col] === 'd')) {
+                    graphic = 'empty_to_diamond.gif';
+                    altTag = 'diamond token'
+                }
+                else if((old_board[row][col] === ' ') && (board[row][col] === 'h')) {
+                    graphic = 'empty_to_heart.gif';
+                    altTag = 'heart token'
+                }
+                else if((old_board[row][col] === ' ') && (board[row][col] === 'd')) {
+                    graphic = 'empty_to_diamond.gif';
+                    altTag = 'diamond token'
+                }
+                else if((old_board[row][col] === 'h') && (board[row][col] === ' ')) {
+                    graphic = 'heart_to_empty.gif';
+                    altTag = 'empty space'
+                }
+                else if((old_board[row][col] === 'd') && (board[row][col] === ' ')) {
+                    graphic = 'diamond_to_empty.gif';
+                    altTag = 'empty space'
+                }
+                else if((old_board[row][col] === 'd') && (board[row][col] === 'h')) {
+                    graphic = 'diamond_to_heart.gif';
+                    altTag = 'heart token'
+                }
+                else if((old_board[row][col] === 'h') && (board[row][col] === 'd')) {
+                    graphic = 'heart_to_diamond.gif';
+                    altTag = 'diamond token'
+                }
+                else {
+                    graphic = 'error.gif';
+                    altTag = 'error';
+                }
+
+                const t = Date.now();
+                $('#' + row + '_' + col).html('<img class="img-fluid" src="assets/images/' + graphic + '?time='+ t +'" alt="' + altTag + '" />');
+                
+                $('#' + row + '_' + col).off('click');
+                if(board[row][col] === ' ') {
+                    $('#' + row + '_' + col).addClass('hovered_over');
+                    $('#' + row + '_' + col).click(((r,c) => {
+                        return(() => {
+                            let request = {
+                                row: r,
+                                column: c,
+                                token: myToken
+                            };
+                            console.log('**** Client log message, sending \'play_token\' command: ' +JSON.stringify(request));
+                            socket.emit('play_token', request);
+                        });
+
+                    })(row,col));
+                }
+                else {
+                    $('#' + row + '_' + col).removeClass('hovered_over');
+
+                }
+            }
+        }
+    }
+    $("#diamondsum").html(diamondSum);
+    $("#heartsum").html(heartSum);
+
+    old_board = board;
+});
+
+socket.on('play_token_response', (response) => {
+    if((typeof response == 'undefined') || (response === null)) {
+        console.log('Server did not receive response')
+        return;
+    }
+    if(response ==='fail') {
+        console.log(response.message);
+        return;
+    }
+
+
+});
+
+socket.on('game_over', (response) => {
+    console.log("reached here");
+    if((typeof response == 'undefined') || (response === null)) {
+        console.log('Server did not receive response')
+        return;
+    }
+    if(response ==='fail') {
+        console.log(response.message);
+        return;
+    }
+    // Announce with a button to the Lobby
+    let nodeA = $("<div id='game_over'></div>");
+    let nodeB = $("<h1>Game Over</h1>");
+    let nodeC = $("<h2>"+ response.who_won + " won!</h2>");
+    let nodeD = $("<a href='lobby.html?username="+ username + "' class='btn btn-lg btn-success' role='button'> Return to Lobby</a>");
+    nodeA.append(nodeB)
+    nodeA.append(nodeC)
+    nodeA.append(nodeD)
+    nodeA.hide();
+    $('#game_over').replaceWith(nodeA);
+    nodeA.show("fade", 1000);
+
+
+
+});
+
 // Request to join chat room
 
 $( () =>{
     let request = {};
-    request.room = chatRoom;
+    request.room = room;
     request.username = username;
     console.log('**** Client log message, sending \'join_room\' command: ' +JSON.stringify(request));
     socket.emit('join_room', request);
 
     $('#welcome').prepend('<h3>Welcome to the Lobby, ' + username+'</h3>');
+    $('#quit').html("<a href='lobby.html?username="+ username + "' class='btn btn-danger' role='button'>Quit</a>");
+
 
 
     $('#chatMessage').keypress(
