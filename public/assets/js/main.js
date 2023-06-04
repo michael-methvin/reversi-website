@@ -121,7 +121,7 @@ socket.on('uninvited', (response) => {
         return;
     }
 
-    let newNode = makeInviteButton();
+    let newNode = makeInviteButton(response.socket_id);
     $('.socket_' + response.socket_id + ' button').replaceWith(newNode);
 });
 
