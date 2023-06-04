@@ -240,7 +240,7 @@ socket.on('player_disconnected', (response) => {
 
 function sendMessage() {
     let request = {};
-    request.room = chatRoom;
+    request.room = room;
     request.username = username;
     request.message = $('#chatMessage').val(); 
 
