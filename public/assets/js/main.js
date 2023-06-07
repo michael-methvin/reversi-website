@@ -313,7 +313,34 @@ socket.on('game_update', (response) => {
         window.location.href='lobby.html?username=' + username;
         return;
     }
-    $('#my_token').html('<h3 id="my_token"> I am ' + myToken + '</h3>');
+
+    if(myToken === 'heart') {
+        $('#my_token').html('<h3 id="my_token"> I am hearts </h3>');
+
+    }
+    else if(myToken === 'diamond') {
+        $('#my_token').html('<h3 id="my_token"> I am diamonds </h3>');
+
+    }
+    else {
+        $('#my_token').html('<h3 id="my_token"> Error: No Token </h3>');
+
+    }
+
+    if(response.game.whose_turn === 'heart') {
+        $('#my_token').append('<h4> Hearts Turn </h4>');
+
+    }
+    else if(response.game.whose_turn === 'diamond') {
+        $('#my_token').append('<h4> Diamonds Turn </h4>');
+
+    }
+    else {
+        $('#my_token').append('<h4>Error: Turn Unknown </h4>');
+
+    }
+
+
 
     let diamondSum = 0;
     let heartSum = 0;
@@ -376,11 +403,15 @@ socket.on('game_update', (response) => {
 
                 const t = Date.now();
                 $('#' + row + '_' + col).html('<img class="img-fluid" src="assets/images/' + graphic + '?time='+ t +'" alt="' + altTag + '" />');
-                
+            }
+                // Set up interactivity
                 $('#' + row + '_' + col).off('click');
-                if(board[row][col] === ' ') {
-                    $('#' + row + '_' + col).addClass('hovered_over');
-                    $('#' + row + '_' + col).click(((r,c) => {
+                $('#' + row + '_' + col).removeClass('hovered_over');
+
+                if(response.game.whose_turn === myToken) {
+                    if(response.game.legal_moves[row][col] === myToken.substr(0,1)) {
+                        $('#' + row + '_' + col).addClass('hovered_over');
+                        $('#' + row + '_' + col).click(((r,c) => {
                         return(() => {
                             let request = {
                                 row: r,
@@ -391,13 +422,9 @@ socket.on('game_update', (response) => {
                             socket.emit('play_token', request);
                         });
 
-                    })(row,col));
+                        })(row,col));
+                    }
                 }
-                else {
-                    $('#' + row + '_' + col).removeClass('hovered_over');
-
-                }
-            }
         }
     }
     $("#diamondsum").html(diamondSum);
@@ -413,6 +440,7 @@ socket.on('play_token_response', (response) => {
     }
     if(response ==='fail') {
         console.log(response.message);
+        alert(response.message);
         return;
     }
 

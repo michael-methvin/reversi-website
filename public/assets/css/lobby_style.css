@@ -14,7 +14,7 @@ body {
 }
 .chatbox {
     background-color: #E8E7E7;
-    height: 500px;
+    height: 400px ;
     overflow-y: auto;
     margin: 0% 20% 0% 10%;
 
@@ -37,8 +37,8 @@ body {
 }
 
 .playersbox {
-    background-color:#925E78;
-    height: 500px;
+    background-color:#273043;
+    height: 400px;
     margin: 5% 5% 0% 10%;
     border-radius: 10px 10px 10px 10px;
     align-content: left;

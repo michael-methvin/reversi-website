@@ -22,3 +22,26 @@ table#game_board td {
 td.hovered_over:hover {
     background-image: url(/assets/images/hover.gif);
 }
+.chatbox {
+    background-color: #E8E7E7;
+    height: 400px ;
+    overflow-y: auto;
+    margin: 0% 20% 0% 10%;
+
+
+}
+.chatheader {
+    color: white;
+    background-color: #F05365;
+    height:50px;
+    margin: 5% 10% 0% 10%;
+    border-radius: 10px 10px 0px 0px;
+
+
+}
+.chatmessager {
+    background-color: #F05365;
+    margin: 0% 10% 0% 10%;
+    border-radius: 0px 0px 10px 10px;
+
+}
