@@ -226,7 +226,7 @@ socket.on('player_disconnected', (response) => {
         domElements.hide("fade",500);
     }
 
-    let newString = '<p class = \'left_room_response\'> ' + response.username + ' left the ' + response.room + '. (' +response.count + ' user(s) in the room.)</p>';
+    let newString = '<p class = \'left_room_response\'> ' + response.username + ' left the chat room.('  +response.count + ' user(s) in the room.)</p>';
     let newNode = $(newString);
     newNode.hide();
     $('#messages').prepend(newNode);
