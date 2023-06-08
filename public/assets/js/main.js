@@ -273,17 +273,18 @@ socket.on('send_message_response', (response) => {
 
 
 let old_board = [
-    ['?', '?', '?', '?', '?', '?', '?', '?'],
-    ['?', '?', '?', '?', '?', '?', '?', '?'],
-    ['?', '?', '?', '?', '?', '?', '?', '?'],
-    ['?', '?', '?', '?', '?', '?', '?', '?'],
-    ['?', '?', '?', '?', '?', '?', '?', '?'],
-    ['?', '?', '?', '?', '?', '?', '?', '?'],
-    ['?', '?', '?', '?', '?', '?', '?', '?'],
-    ['?', '?', '?', '?', '?', '?', '?', '?']
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 ];
 
 let myToken = '';
+let intervalTimer;
 
 socket.on('game_update', (response) => {
     if((typeof response == 'undefined') || (response === null)) {
@@ -427,6 +428,33 @@ socket.on('game_update', (response) => {
                 }
         }
     }
+    clearInterval(intervalTimer)
+    intervalTimer = setInterval(( (last_time) => {
+        return( () => {
+            let d = new Date();
+            let elapsed_m = d.getTime() - last_time;
+            let minutes = Math.floor(elapsed_m / (60 * 1000));
+            let seconds = Math.floor((elapsed_m % (60 * 1000)) / 1000);
+            let total = minutes * 60 + seconds;
+            if(total > 100) {
+                total = 100;
+            }
+            $("#elapsed").css("width", total + "%").attr("aria-valuenow", total);
+            let timeString = "" + seconds;
+            timeString = timeString.padStart(2,'0');
+            timeString = minutes + ":" + timeString;
+            
+            if (total < 100) {
+                $("#elapsed").html(timeString);
+            }
+            else {
+                $("#elapsed").html("Times up!");
+            }
+        })
+    })(response.game.last_move_time)
+        , 1000);
+
+
     $("#diamondsum").html(diamondSum);
     $("#heartsum").html(heartSum);
 
