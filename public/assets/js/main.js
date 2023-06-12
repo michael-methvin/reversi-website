@@ -315,19 +315,22 @@ socket.on('game_update', (response) => {
         return;
     }
 
-    if(myToken === 'heart') {
-        $('#my_token').html('<h3 id="my_token"> I am hearts </h3>');
+    if((myToken === 'heart') && (response.game.whose_turn === 'heart') ||
+       (myToken === 'diamond') && (response.game.whose_turn === 'diamond')
+    ) {
+        $('#my_token').html('<h3 id="my_token"> Your Turn! </h3>');
 
     }
-    else if(myToken === 'diamond') {
-        $('#my_token').html('<h3 id="my_token"> I am diamonds </h3>');
+    else if((myToken === 'diamond') && (response.game.whose_turn === 'heart') ||
+            (myToken === 'heart') && (response.game.whose_turn === 'diamond')) {
+        $('#my_token').html('<h3 id="my_token"> Waiting for opponent to play... </h3>');
 
     }
     else {
         $('#my_token').html('<h3 id="my_token"> Error: No Token </h3>');
 
     }
-
+    /*
     if(response.game.whose_turn === 'heart') {
         $('#my_token').append('<h4> Hearts Turn </h4>');
 
@@ -339,7 +342,7 @@ socket.on('game_update', (response) => {
     else {
         $('#my_token').append('<h4>Error: Turn Unknown </h4>');
 
-    }
+    }*/
 
 
 
@@ -444,11 +447,31 @@ socket.on('game_update', (response) => {
             timeString = timeString.padStart(2,'0');
             timeString = minutes + ":" + timeString;
             
-            if (total < 100) {
+            if(total < 50) {
                 $("#elapsed").html(timeString);
+                $("#elapsed").removeClass('bg-danger');
+                $("#elapsed").removeClass('bg-warning');
+                $("#elapsed").addClass('bg-success');
+
+            }
+            else if ((total >= 50) && (total < 75)) {
+                $("#elapsed").html(timeString);
+                $("#elapsed").removeClass('bg-success');
+                $("#elapsed").removeClass('bg-danger');
+                $("#elapsed").addClass('bg-warning');
+            }
+            else if((total >= 75) && (total < 100) ) {
+                $("#elapsed").html(timeString);
+                $("#elapsed").removeClass('bg-success');
+                $("#elapsed").removeClass('bg-warning');
+                $("#elapsed").addClass('bg-danger');
             }
             else {
                 $("#elapsed").html("Times up!");
+                $("#elapsed").removeClass('bg-success');
+                $("#elapsed").removeClass('bg-warning');
+                $("#elapsed").addClass('bg-danger');
+
             }
         })
     })(response.game.last_move_time)
@@ -496,9 +519,6 @@ socket.on('game_over', (response) => {
     nodeA.hide();
     $('#game_over').replaceWith(nodeA);
     nodeA.show("fade", 1000);
-
-
-
 });
 
 // Request to join chat room

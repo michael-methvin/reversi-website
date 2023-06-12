@@ -45,3 +45,34 @@ td.hovered_over:hover {
     border-radius: 0px 0px 10px 10px;
 
 }
+
+ul {
+    list-style: none;
+    display:flex;
+    padding:0;
+    margin-right:auto;
+}
+
+ul.transition {
+    display: flex;
+    position: absolute;
+    z-index: 10;
+    height: 100vh;
+    width: 100%;
+    top:0;
+    left:0;
+    margin:0;
+    pointer-events:none;
+}
+
+ul.transition li {
+    transform: scaleY(0);
+    width:20%;
+}
+ul.transition li.white {
+    background: white;
+}
+ul.transition li.pink {
+    background: pink;
+
+}

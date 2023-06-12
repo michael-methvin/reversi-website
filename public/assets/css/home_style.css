@@ -1,0 +1,54 @@
+html,body {
+    margin:0;
+    padding:0;
+}
+
+body {
+    font-family: 'Montserrat';
+    height:100vh;
+    margin:0;
+    overflow: hidden;
+}
+
+.slide {
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+}
+ul {
+    list-style: none;
+    display:flex;
+    padding:0;
+    margin-right:auto;
+}
+
+ul.transition {
+    display: flex;
+    position: absolute;
+    z-index: 10;
+    height: 100vh;
+    width: 100%;
+    top:0;
+    left:0;
+    margin:0;
+    pointer-events:none;
+}
+
+ul.transition li {
+    transform: scaleY(0);
+    width:20%;
+}
+ul.transition li.white {
+    background: white;
+}
+ul.transition li.pink {
+    background: pink;
+
+}
+
+.is-home {
+    height: calc(100vh);
+    overflow-y: hidden;
+    background-image: url("../images/background_image1.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
